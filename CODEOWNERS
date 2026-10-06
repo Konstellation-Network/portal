@@ -1,0 +1,4 @@
+# Ownership is shared across engineering (handbook ENGINEERING.md §17), so every
+# path is owned by every current engineer. Copied from handbook/CODEOWNERS.template.
+
+* @defidevrel @Evangel90 @Levi-Ojukwu @OlolaJaco @Psalmuel01

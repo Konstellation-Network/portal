@@ -1,0 +1,8 @@
+**/node_modules
+**/dist
+**/*.test.ts
+**/.env
+.git
+.github
+apps/web/src
+apps/web/functions

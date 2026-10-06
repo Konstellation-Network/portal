@@ -1,0 +1,39 @@
+{
+  "name": "portal",
+  "version": "0.0.0",
+  "private": true,
+  "license": "UNLICENSED",
+  "description": "Portal: the Konstellation user app (XP, hourly streaks, leaderboard)",
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev:api": "npm run dev -w @portal/api",
+    "dev:web": "npm run dev -w @portal/web",
+    "typecheck": "tsc -p tsconfig.json && tsc -p apps/web/tsconfig.json",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "vitest run",
+    "build": "npm run build -w @portal/web",
+    "openapi": "npm run openapi -w @portal/api && openapi-typescript apps/api/openapi.json -o packages/sdk/src/schema.ts && prettier --write apps/api/openapi.json packages/sdk/src/schema.ts",
+    "db:generate": "npm run generate -w @portal/db",
+    "db:migrate": "npm run migrate -w @portal/api",
+    "secret-scan": "node scripts/secret-scan.mjs"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@types/node": "24.19.1",
+    "eslint": "10.12.0",
+    "openapi-typescript": "7.13.0",
+    "prettier": "3.9.9",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.71.1",
+    "vitest": "5.0.3"
+  }
+}

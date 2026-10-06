@@ -1,0 +1,60 @@
+name: ci
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: portal
+          POSTGRES_PASSWORD: portal
+          POSTGRES_DB: portal
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U portal"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      # The schema tests run against this real Postgres (PGlite locally).
+      DATABASE_URL: postgres://portal:portal@localhost:5432/portal
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npm run format:check
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+      - name: migrations apply to a real Postgres
+        run: npm run db:migrate
+      - name: OpenAPI spec and SDK are current
+        run: |
+          npm run openapi
+          git diff --exit-code -- apps/api/openapi.json packages/sdk/src/schema.ts
+      - name: migrations match the schema
+        run: |
+          npm run db:generate
+          test -z "$(git status --porcelain -- packages/db/migrations)"
+      - name: production dependencies have no high advisories
+        run: npm audit --omit=dev --audit-level=high
+      - name: secret scan
+        run: npm run secret-scan
+      - name: API image builds
+        run: docker build -f apps/api/Dockerfile -t portal-api:ci .
