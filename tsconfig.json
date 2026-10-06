@@ -1,0 +1,23 @@
+{
+  // Server side: packages/* and apps/api. The API runs this TypeScript directly
+  // on Node 24 (type stripping), so tsc only checks types: noEmit, erasable
+  // syntax only, explicit .ts import extensions. apps/web has its own config.
+  "compilerOptions": {
+    "target": "ES2024",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "lib": ["ES2024"],
+    "types": ["node"],
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitOverride": true,
+    "verbatimModuleSyntax": true,
+    "erasableSyntaxOnly": true,
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true
+  },
+  "include": ["packages/*/src/**/*.ts", "packages/*/*.ts", "apps/api/src/**/*.ts", "*.ts"]
+}
